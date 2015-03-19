@@ -8,9 +8,10 @@
 
 
     <div class="media">
-        <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4></div>
+        <img class="media-object" src="/lolcat/image/{{  cat.id }}" />
+        <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4>
         {{ cat.blurb }}
-    </div>
+    </div></div>
 
 
 {% endblock %}

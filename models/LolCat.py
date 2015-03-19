@@ -8,6 +8,7 @@ class LolCat(db.Document):
     blurb = db.StringField(required=False)
     source = db.StringField(required=False)
     image = db.StringField(required=False)
+    image_data = db.FileField()
     up_votes = db.IntField(default=0)
     down_votes = db.IntField(default=0)
 

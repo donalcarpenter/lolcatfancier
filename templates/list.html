@@ -9,10 +9,14 @@
     {%  for cat in cats %}
 
     <div class="media">
-        <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4></div>
+        <div class="media-left">
+            <img class="media-object" src="/lolcat/image/{{ cat.id }}" width="200" height="200" />
+        </div>
+        <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4>
         {{ cat.blurb }}
         <a href="/lolcat/edit/{{ cat.id }}">edit</a>
         <a href="/lolcat/delete/{{ cat.id }}">delete</a>
+        </div>
     </div>
 
 
