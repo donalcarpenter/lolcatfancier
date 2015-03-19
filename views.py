@@ -15,13 +15,14 @@ def one(catid):
     puss = LolCat.objects.get_or_404(id=catid)
     return render_template("detail.html", cat=puss)
 
-@lolcatbp.route("/lolcat/new")
-def create_form():
-    return render_template("/create.html", cat=None)
 
+@lolcatbp.route("/lolcat/new")
 @lolcatbp.route('/lolcat/edit/<catid>')
-def edit(catid):
-    puss = LolCat.objects.get_or_404(id=catid)
+def edit(catid=0):
+    if(catid != 0):
+        puss = LolCat.objects.get_or_404(id=catid)
+    else:
+        puss = None
     return render_template("/create.html", cat=puss)
 
 @lolcatbp.route('/lolcat/save', methods=['POST'])
@@ -42,5 +43,13 @@ def create():
     cat.save()
     flash(flash_message.format(cat.title), "success")
     return render_template("detail.html", cat=cat)
+
+@lolcatbp.route('/lolcat/delete/<catid>')
+def delete(catid):
+    cat = LolCat.objects.get_or_404(id=catid)
+    cat.delete()
+    flash("Cat {} has been deleted".format(cat.title))
+    return home()
+
 
 

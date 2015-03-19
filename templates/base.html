@@ -3,35 +3,47 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Python Flask MongoDb Bootstrap Angular</title>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/bootstrap.css" rel="stylesheet">
 </head>
 <style>
-body { margin-top: 40px;}
+    body { margin-top: 70px;}
 </style>
 <body>
 
   {%- block topbar -%}
+
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <h2>
-              The Lolcat Fancier
-          </h2>
+              <a class="navbar-brand" href="/">The Lolcat Fancier</a>
         </div>
         <ul class="nav navbar-nav">
-            <a href="/">Home</a>
-            <a href="/lolcat/new">new</a>
+            <li><a href="/">home</a></li>
+            <li><a href="/lolcat/new">new</a></li>
         </ul>
       </div>
     </nav>
+
     {%- endblock -%}
 
     <div class="container">
       <div class="content">
         {% block page_header %}{% endblock %}
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class=flashes>
+                {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
       </div>
     </div>
+
     {% block js_footer %}{% endblock %}
 
 </body>

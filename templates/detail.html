@@ -6,15 +6,6 @@
 
 {%  block content %}
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li class="alert alert-success">{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
 
     <div class="media">
         <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4></div>

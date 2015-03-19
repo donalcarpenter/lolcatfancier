@@ -4,17 +4,7 @@
 <h2>{{ heading }}</h2>
 {%  endblock %}
 
-
-{% block content %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li class="alert alert-success">{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+{%  block content %}
 
 <form role="form" method="post" action="/lolcat/save">
     <input type="hidden" name="id" value="{{ cat.id if cat is not none }}" />
