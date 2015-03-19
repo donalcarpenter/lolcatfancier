@@ -1,14 +1,22 @@
 from flask import Blueprint, jsonify, request, render_template, flash, Response
 from models.LolCat import LolCat
+from math import ceil
 
 lolcatbp = Blueprint('lolcat', __name__)
 
+items_per_page = 3
+
 @lolcatbp.route('/')
-def home():
+@lolcatbp.route('/lolcats/<int:page>')
+def home(page=0):
     res = []
-    for lc in LolCat.objects:
+    #total = len(LolCat.objects)
+    start_index = page * items_per_page
+    results = LolCat.objects.order_by("-created_at")[start_index: start_index + items_per_page]
+    total = results.count(with_limit_and_skip=False)
+    for lc in results:
         res.append(lc)
-    return render_template("list.html", cats=res)
+    return render_template("list.html", cats=res, total=total, page=page, pages=ceil(total/items_per_page))
 
 @lolcatbp.route('/lolcat/<catid>')
 def one(catid):
@@ -27,7 +35,7 @@ def edit(catid=0):
 
 @lolcatbp.route('/lolcat/save', methods=['POST'])
 def create():
-    #try:
+    try:
         cat_id = request.form.get('id')
         if(cat_id):
             #this is an edit so retrieve cat details from mongo
@@ -43,16 +51,19 @@ def create():
 
         file = request.files['image']
         if(file):
-            cat.image_data.content_type = file.content_type
+            if(cat.image_data):
+                cat.image_data.delete() #we need to this first. otherwise the new one will not save
+
             cat.image_data.new_file()
+            cat.image_data.content_type = file.content_type
             cat.image_data.write(file.stream)
             cat.image_data.close()
 
         cat.save()
         flash(flash_message.format(cat.title), "success")
         return render_template("detail.html", cat=cat)
-    #except Exception as e:
-    #    return render_template("error.html", err=e)
+    except Exception as e:
+        return render_template("error.html", err=e)
 
 @lolcatbp.route('/lolcat/delete/<catid>')
 def delete(catid):

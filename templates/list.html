@@ -6,6 +6,8 @@
 
 {%  block content %}
 
+    <div class="well well-sm">There are {{ total }} lolcats for you</div>
+
     {%  for cat in cats %}
 
     <div class="media">
@@ -19,7 +21,27 @@
         </div>
     </div>
 
-
     {%  endfor  %}
+
+    <ul class="pagination">
+    {%  if page > 0 %}
+    <li>
+          <a href="/lolcats/{{ page - 1 }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+    </li>
+    {%  endif %}
+
+    {% for i in range(0, pages) %}
+        <li class="{{ "active" if page == loop.index0 }}"><a href="/lolcats/{{ loop.index0 }}">{{ loop.index }}</a></li>
+    {% endfor %}
+
+    {%  if (page + 1) < pages %}
+    <li>
+          <a href="/lolcats/{{ page + 1 }}" aria-label="Previous">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+    {%  endif %}
+    </ul>
 
 {% endblock %}
