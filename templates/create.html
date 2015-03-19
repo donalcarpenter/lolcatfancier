@@ -1,0 +1,41 @@
+{%  extends "base.html" %}
+
+{%  block page_header %}
+<h2>{{ heading }}</h2>
+{%  endblock %}
+
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li class="alert alert-success">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form role="form" method="post" action="/lolcat/save">
+    <input type="hidden" name="id" value="{{ cat.id if cat is not none }}" />
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" class="form-control" value="{{ cat.title if cat is not none}}" />
+    </div>
+    <div class="form-group">
+        <label for="blurb">Blurb:</label>
+        <input type="text" id="blurb" name="blurb" class="form-control" value="{{ cat.blurb if cat is not none }}" />
+    </div>
+    <div class="form-group">
+        <label for="source">Source:</label>
+        <input type="text" id="source" name="source" class="form-control" value="{{ cat.source if cat is not none }}" />
+    </div>
+    <div class="form-group">
+        <label for="image">Image:</label>
+        <input type="text" id="image" name="image" class="form-control" value="{{  cat.image  if cat is not none }}" />
+    </div>
+
+    <button type="submit" class="btn btn-default">Save</button>
+</form>
+
+{% endblock %}

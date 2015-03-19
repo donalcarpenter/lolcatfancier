@@ -1,5 +1,5 @@
 import datetime
-from lolcatfancier import db
+from app import db
 
 
 class LolCat(db.Document):
