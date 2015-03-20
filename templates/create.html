@@ -6,7 +6,7 @@
 
 {%  block content %}
 
-<form role="form" method="post" action="/lolcat/save" enctype="multipart/form-data">
+<form role="form" method="post" action="{{ url_for('.create') }}" enctype="multipart/form-data">
     <input type="hidden" name="id" value="{{ cat.id if cat is not none }}" />
     <div class="form-group">
         <label for="title">Title:</label>

@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify, request, render_template, flash, Response
-from models.LolCat import LolCat
+from flask import Blueprint, jsonify, request, render_template, flash, Response, redirect, url_for
+from models.LolCat import LolCat, Comment, CommentReply
 from math import ceil
 
 lolcatbp = Blueprint('lolcat', __name__)
@@ -10,9 +10,8 @@ items_per_page = 3
 @lolcatbp.route('/lolcats/<int:page>')
 def home(page=0):
     res = []
-    #total = len(LolCat.objects)
     start_index = page * items_per_page
-    results = LolCat.objects.order_by("-created_at")[start_index: start_index + items_per_page]
+    results = LolCat.objects.order_by("-created_at")[start_index:start_index + items_per_page]
     total = results.count(with_limit_and_skip=False)
     for lc in results:
         res.append(lc)
@@ -22,6 +21,19 @@ def home(page=0):
 def one(catid):
     puss = LolCat.objects.get_or_404(id=catid)
     return render_template("detail.html", cat=puss)
+
+@lolcatbp.route('/lolcat/<catid>/comments', methods=['POST'])
+def save_comment(catid):
+    puss = LolCat.objects.get_or_404(id=catid)
+    comment = Comment()
+    comment.author = request.form.get("author")
+    comment.comment = request.form.get("comment")
+    comment.lolcat = puss.id
+    comment.save()
+    puss.update(push__comments=comment)
+    puss.save()
+    flash("your lovely new comment has been added to {}".format(puss.title))
+    return redirect(url_for('.one', catid=catid), code=302)
 
 
 @lolcatbp.route("/lolcat/new")
