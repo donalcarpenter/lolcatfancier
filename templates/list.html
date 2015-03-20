@@ -12,7 +12,9 @@
 
     <div class="media">
         <div class="media-left">
+        <a href="{{ url_for('.one', catid=cat.id) }}">
             <img class="media-object" src="{{ url_for('.image_data', catid=cat.id) }}" width="200" height="200" />
+            </a>
         </div>
         <div class="media-body"><h4 class="media-heading"><a href="{{ url_for('.one', catid=cat.id) }}">{{ cat.title }}</a></h4>
         {{ cat.blurb }}
