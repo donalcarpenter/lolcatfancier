@@ -6,24 +6,35 @@
 
 {%  block content %}
 
-    <div class="well well-sm">There are {{ total }} lolcats for you</div>
+    <div class="container">
+        <div class="well well-sm">There are {{ total }} lolcats for you</div>
 
-    {%  for cat in cats %}
-
-    <div class="media">
-        <div class="media-left">
-        <a href="{{ url_for('.one', catid=cat.id) }}">
-            <img class="media-object" src="{{ url_for('.image_data', catid=cat.id) }}" width="200" height="200" />
+        <div class="row">
+        {%  for cat in cats %}
+            <div class="col-sm-6 col-md-3 thumbnail">
+            <a href="{{ url_for('.one', catid=cat.id) }}">
+                <img src="{{ url_for('.image_data', catid=cat.id) }}" alt="{{ cat.title }}" />
+                <h3>{{ cat.title }}</h3>
             </a>
+            <p>{{ cat.blurb }}</p>
+            <p>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('.one', catid=cat.id) }}" class="btn btn-primary">view</a>
+                    <div class="btn-group" role="group">
+                        <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button">options<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ url_for('.edit', catid = cat.id) }}"><span class="glyphicon glyphicon-edit" aria-label="true"></span> edit</a></li>
+                            <li><a href="{{ url_for('.delete', catid = cat.id) }}"><span class="glyphicon glyphicon-erase" aria-label="true"></span> delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </p>
         </div>
-        <div class="media-body"><h4 class="media-heading"><a href="{{ url_for('.one', catid=cat.id) }}">{{ cat.title }}</a></h4>
-        {{ cat.blurb }}
-        <a href="{{ url_for('.edit', catid = cat.id) }}" aria-label="Left Align"><span class="glyphicon glyphicon-edit" aria-label="true"></span> edit</a>
-        <a href="{{ url_for('.delete', catid = cat.id) }}"><span class="glyphicon glyphicon-erase" aria-label="true"></span> delete</a>
+        {%  endfor  %}
         </div>
     </div>
 
-    {%  endfor  %}
+
 
     <ul class="pagination">
     {%  if page > 0 %}

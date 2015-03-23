@@ -7,37 +7,37 @@
 {%  block content %}
 
 
-    <div class="media">
+    <div class="jumbotron">
+        <h3 class="media-heading">{{ cat.title }}</h3>
         <img class="media-object" src="{{ url_for('.image_data', catid=cat.id) }}" />
-        <div class="media-body"><h4 class="media-heading">{{ cat.title }}</h4>
+        <p>
         {{ cat.blurb }}
-        <a href="{{ url_for('.edit', catid = cat.id) }}" aria-label="Left Align"><span class="glyphicon glyphicon-edit" aria-label="true"></span> edit</a>
-        <a href="{{ url_for('.delete', catid = cat.id) }}"><span class="glyphicon glyphicon-erase" aria-label="true"></span> delete</a>
-    </div></div>
+
+    </p><a href="{{ url_for('.edit', catid = cat.id) }}" aria-label="Left Align"><span class="glyphicon glyphicon-edit" aria-label="true"></span> edit</a>
+        <a href="{{ url_for('.delete', catid = cat.id) }}"><span class="glyphicon glyphicon-erase" aria-label="true"></span> delete</a></div>
 
     {% for comment in cat.comments %}
-
-
-        <ul>
-            <li>{{ comment.author }}<br />{{  comment.comment }}</li>
-    </ul>
-
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ comment.author }}</div>
+        <div class="panel-body">{{  comment.comment }}</div>
+    </div>
     {% endfor %}
-            <form role="form" method="post" action="{{ url_for('.save_comment', catid=cat.id) }}">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Add a comment</div>
-        <div class="panel-body">
 
+    <form role="form" method="post" action="{{ url_for('.save_comment', catid=cat.id) }}">
+        {{  form.hidden_tag() }}
+        <div class="panel panel-primary">
+            <div class="panel-heading">Add a comment</div>
+            <div class="panel-body">
                 <div class="form-group">
-                    <label for="author">your name:</label>
-                    <input type="text" name="author" id="author" class="form-control" />
+                    {{ form.author.label }}
+                    {{ form.author(class_="form-control") }}
                 </div>
                 <div class="form-group">
-                    <label for="comment">Comment:</label>
-                    <textarea name="comment" id="comment" rows="10" style="width:100%"></textarea>
+                    {{ form.comment.label }}
+                    {{ form.comment(class_="form-control") }}
                 </div><div class="panel-footer"><button type="submit" class="btn btn-primary">Add Comment</button></div>
-</div>
-</div>
-            </form>
+            </div>
+        </div>
+    </form>
 
 {% endblock %}

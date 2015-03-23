@@ -4,7 +4,7 @@ from math import ceil
 import forms
 
 lol_cat_blueprint = Blueprint('lolcat', __name__)
-items_per_page = 3
+items_per_page = 4
 
 
 @lol_cat_blueprint.route('/')
@@ -75,7 +75,7 @@ def edit(catid=None):
         puss = LolCat.objects.get_or_404(id=catid)
     else:
         puss = None
-    form = forms.UploadForm(obj=puss)
+    form = forms.LolCatUploadForm(obj=puss)
     return render_template("create.html", form=form)
 
 
@@ -87,7 +87,7 @@ def save_lolcat():
     :return:goes to the detail view of the lolcat
     """
     try:
-        form = forms.UploadForm()
+        form = forms.LolCatUploadForm()
         if(not form.validate_on_submit()):
             flash("There were some problems validating that lolcat, you can try again...", "warning")
             return render_template("create.html", form=form)
