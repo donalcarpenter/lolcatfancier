@@ -1,14 +1,21 @@
 from flask import Blueprint, jsonify, request, render_template, flash, Response, redirect, url_for
 from models.LolCat import LolCat, Comment, CommentReply
 from math import ceil
+import forms
 
-lolcatbp = Blueprint('lolcat', __name__)
-
+lol_cat_blueprint = Blueprint('lolcat', __name__)
 items_per_page = 3
 
-@lolcatbp.route('/')
-@lolcatbp.route('/lolcats/<int:page>')
+
+@lol_cat_blueprint.route('/')
+@lol_cat_blueprint.route('/lolcats/<int:page>')
 def home(page=0):
+    """
+    Gets the home page. This has a list of lolats
+
+    :param page: the page to return
+    :return: The rendered view for the landing page
+    """
     res = []
     start_index = page * items_per_page
     results = LolCat.objects.order_by("-created_at")[start_index:start_index + items_per_page]
@@ -17,38 +24,75 @@ def home(page=0):
         res.append(lc)
     return render_template("list.html", cats=res, total=total, page=page, pages=ceil(total/items_per_page))
 
-@lolcatbp.route('/lolcat/<catid>')
+
+@lol_cat_blueprint.route('/lolcat/<catid>')
 def one(catid):
-    puss = LolCat.objects.get_or_404(id=catid)
-    return render_template("detail.html", cat=puss)
+    """
+    This is the detail view for a single lolcat
+    :param catid:
+    :return:
+    """
+    if(not catid):
+        # this needs to return a 400 Bad Request
+        pass
 
-@lolcatbp.route('/lolcat/<catid>/comments', methods=['POST'])
+    puss = LolCat.objects.get_or_404(id=catid)
+    commentForm = forms.CommentForm()
+    return render_template("detail.html", cat=puss, form=commentForm)
+
+
+@lol_cat_blueprint.route('/lolcat/<catid>/comments', methods=['POST'])
 def save_comment(catid):
+    """
+    This adds a comment to a lolcat
+
+    :param catid: the lolcat to add the comment to
+    :return:should redirect back to the lolcat detail view
+    """
+
     puss = LolCat.objects.get_or_404(id=catid)
-    comment = Comment()
-    comment.author = request.form.get("author")
-    comment.comment = request.form.get("comment")
-    comment.lolcat = puss.id
-    comment.save()
-    puss.update(push__comments=comment)
-    puss.save()
-    flash("your lovely new comment has been added to {}".format(puss.title))
-    return redirect(url_for('.one', catid=catid), code=302)
+    form = forms.CommentForm()
+    if(form.validate_on_submit()):
+        comment = Comment(author=form.author.data, comment=form.comment.data, lolcat=puss.id)
+        comment.save()
+        puss.update(push__comments=comment)
+        puss.save()
+        flash("your lovely new comment has been added to {}".format(puss.title), "success")
+        return redirect(url_for('.one', catid=catid), code=302)
+    flash("There were some problems validating that comment, you can try again...", "warning")
+    return render_template("detail.html", cat=puss, form=form)
 
 
-@lolcatbp.route("/lolcat/new")
-@lolcatbp.route('/lolcat/edit/<catid>')
-def edit(catid=0):
-    if(catid != 0):
+@lol_cat_blueprint.route("/lolcat/new")
+@lol_cat_blueprint.route('/lolcat/edit/<catid>')
+def edit(catid=None):
+    """
+    This is view displays the form to add a new lolcat or edit an existing lolcat
+    :param catid:the id of the cat to edit, or None if this is a new lolcat
+    :return: the view that has the lolcat form
+    """
+    if(catid):
         puss = LolCat.objects.get_or_404(id=catid)
     else:
         puss = None
-    return render_template("/create.html", cat=puss)
+    form = forms.UploadForm(obj=puss)
+    return render_template("create.html", form=form)
 
-@lolcatbp.route('/lolcat/save', methods=['POST'])
-def create():
+
+@lol_cat_blueprint.route('/lolcat/save', methods=['POST'])
+def save_lolcat():
+    """
+    This is where lolcats get saved to our db
+
+    :return:goes to the detail view of the lolcat
+    """
     try:
-        cat_id = request.form.get('id')
+        form = forms.UploadForm()
+        if(not form.validate_on_submit()):
+            flash("There were some problems validating that lolcat, you can try again...", "warning")
+            return render_template("create.html", form=form)
+
+        cat_id = form.id.data
         if(cat_id):
             #this is an edit so retrieve cat details from mongo
             flash_message ="Cat {} has been updated"
@@ -57,15 +101,16 @@ def create():
             #this is a new lolcat
             flash_message = "Cat {} has been created"
             cat = LolCat()
-        cat.title = request.form.get('title')
-        cat.blurb = request.form.get('blurb')
-        cat.source = request.form.get('source')
 
-        file = request.files['image']
-        if(file):
+        cat.title   = form.title.data
+        cat.blurb   = form.blurb.data
+        cat.source  = form.source.data
+
+        if(form.image_data.has_file()):
             if(cat.image_data):
                 cat.image_data.delete() #we need to this first. otherwise the new one will not save
 
+            file = form.image_data.data
             cat.image_data.new_file()
             cat.image_data.content_type = file.content_type
             cat.image_data.write(file.stream)
@@ -73,20 +118,31 @@ def create():
 
         cat.save()
         flash(flash_message.format(cat.title), "success")
-        return render_template("detail.html", cat=cat)
+        return render_template("detail.html", cat=cat, form=forms.CommentForm())
     except Exception as e:
         return render_template("error.html", err=e)
 
-@lolcatbp.route('/lolcat/delete/<catid>')
+
+@lol_cat_blueprint.route('/lolcat/delete/<catid>')
 def delete(catid):
+    """
+    This will permanentley delete a lolcat
+    :param catid: the id of the lolcat to delete
+    :return: redirects to home
+    """
     cat = LolCat.objects.get_or_404(id=catid)
     cat.delete()
-    flash("Cat {} has been deleted".format(cat.title))
+    flash("Cat {} has been deleted".format(cat.title), "success")
     return home()
 
 
-@lolcatbp.route('/lolcat/image/<catid>')
+@lol_cat_blueprint.route('/lolcat/image/<catid>')
 def image_data(catid):
+    """
+    This gets the bytes that constitute the lolcat image
+    :param catid: the cat id that you want to see
+    :return:a byte[] stream
+    """
     cat = LolCat.objects.get_or_404(id=catid)
     data = cat.image_data.read()
     ct = cat.image_data.content_type
