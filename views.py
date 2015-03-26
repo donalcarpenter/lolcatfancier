@@ -38,7 +38,8 @@ def one(catid):
 
     puss = LolCat.objects.get_or_404(id=catid)
     commentForm = forms.CommentForm()
-    return render_template("detail.html", cat=puss, form=commentForm)
+    replyForm = forms.CommentReplyForm()
+    return render_template("detail.html", cat=puss, form=commentForm, replyForms=(replyForm, ))
 
 
 @lol_cat_blueprint.route('/lolcat/<catid>/comments', methods=['POST'])
@@ -49,18 +50,45 @@ def save_comment(catid):
     :param catid: the lolcat to add the comment to
     :return:should redirect back to the lolcat detail view
     """
-
     puss = LolCat.objects.get_or_404(id=catid)
     form = forms.CommentForm()
-    if(form.validate_on_submit()):
-        comment = Comment(author=form.author.data, comment=form.comment.data, lolcat=puss.id)
-        comment.save()
-        puss.update(push__comments=comment)
-        puss.save()
-        flash("your lovely new comment has been added to {}".format(puss.title), "success")
-        return redirect(url_for('.one', catid=catid), code=302)
-    flash("There were some problems validating that comment, you can try again...", "warning")
-    return render_template("detail.html", cat=puss, form=form)
+    if(not form.validate_on_submit()):
+        flash("There were some problems validating that comment, you can try again...", "warning")
+        replyForm = forms.CommentReplyForm()
+        return render_template("detail.html", cat=puss, form=form, replyForms=(replyForm, ))
+
+    comment = Comment(author=form.author.data, comment=form.comment.data, lolcat=puss.id)
+    comment.save()
+    puss.update(push__comments=comment)
+    puss.save()
+    flash("your lovely new comment has been added to {}".format(puss.title), "success")
+    return redirect(url_for('.one', catid=catid), code=302)
+
+
+@lol_cat_blueprint.route("/lolcat/<catid>/comment/<commentid>/replies", methods=['POST'])
+def save_comment_reply(catid, commentid):
+    """
+    This will save a single comment reply
+    :param catid: the id of the lolcat
+    :param commentid: the comment to add the reply to
+    :return: redirects back to the single lolcat page
+    """
+    form = forms.CommentReplyForm()
+    if(not form.validate_on_submit()):
+        flash("there was an error adding your comment reply - try again", "warning")
+        cat = LolCat.objects.get_or_404(id=catid)
+        form.comment_id = commentid
+        emptyForm = forms.CommentReplyForm()
+        emptyForm.author.data = ""
+        emptyForm.comment.data = ""
+        return render_template("detail.html", cat=cat, form=forms.CommentForm(), replyForms=(emptyForm, form))
+
+    comment = Comment.objects.get_or_404(id=commentid)
+    reply = CommentReply(author=form.author.data, comment=form.comment.data)
+    comment.replies.append(reply)
+    comment.save()
+    flash("your new comment reply has been saved", "success")
+    return redirect(url_for('.one', catid=catid), code=302)
 
 
 @lol_cat_blueprint.route("/lolcat/new")
@@ -118,7 +146,7 @@ def save_lolcat():
 
         cat.save()
         flash(flash_message.format(cat.title), "success")
-        return render_template("detail.html", cat=cat, form=forms.CommentForm())
+        return render_template("detail.html", cat=cat, form=forms.CommentForm(), replyForms=(forms.CommentReplyForm(),))
     except Exception as e:
         return render_template("error.html", err=e)
 
