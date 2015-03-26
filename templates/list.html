@@ -17,6 +17,7 @@
                 <h3>{{ cat.title }}</h3>
             </a>
             <p>{{ cat.blurb }}</p>
+            <p>{{  cat.comments | length }} comments</p>
             <p>
                 <div class="btn-group" role="group">
                     <a href="{{ url_for('.one', catid=cat.id) }}" class="btn btn-primary">view</a>

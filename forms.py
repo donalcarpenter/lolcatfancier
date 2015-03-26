@@ -19,3 +19,8 @@ class LolCatUploadForm(Form):
 class CommentForm(Form):
     author = StringField("your name")
     comment = TextAreaField("comment", validators=[DataRequired()])
+
+class CommentReplyForm(CommentForm):
+    comment = StringField("comment", validators=[DataRequired()])
+    comment_id = ""
+

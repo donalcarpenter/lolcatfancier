@@ -7,7 +7,8 @@ class CommentReply(db.EmbeddedDocument):
     comment     = db.StringField(required=True)
 
     def __repr__(self):
-        return '<reply {} {}>'.format(self.id, self.title)
+        return '<reply {} {}>'.format(self.created_at, self.author)
+
 
 class Comment(db.Document):
     created_at  = db.DateTimeField(default = datetime.datetime.now, required=True)
@@ -17,7 +18,8 @@ class Comment(db.Document):
     lolcat      = db.ObjectIdField
 
     def __repr__(self):
-        return '<comment {} {}>'.format(self.id, self.title)
+        return '<comment {} {}>'.format(self.id, self.author)
+
 
 class LolCat(db.Document):
     created_at  = db.DateTimeField(default = datetime.datetime.now, required=True)

@@ -20,6 +20,36 @@
     <div class="panel panel-default">
         <div class="panel-heading">{{ comment.author }}</div>
         <div class="panel-body">{{  comment.comment }}</div>
+
+            <ul class="list-group">
+
+            {%  for reply in comment.replies%}
+
+                <li class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ reply.author }}</h4>
+                    <p class="list-group-item-text">{{ reply.comment }}</p>
+                </li>
+
+            {% endfor %}
+
+                <li class="list-group-item">
+                    <div class="container">
+                {%set rf = replyForms | selectattr("comment_id", "equalto", comment.id | string) | first | default(replyForms[0])  %}
+                    <form role="form" method="post" action="{{ url_for('.save_comment_reply', catid=cat.id, commentid=comment.id) }}" class="form-inline">
+                        {{  rf.hidden_tag() }}
+                        <div class="form-group">
+                            {{ rf.author.label }}
+                            {{ rf.author(class_="form-control", placeholder="author") }}
+                        </div>
+                        <div class="form-group">
+                            {{ rf.comment.label }}
+                            {{ rf.comment(class_="form-control", placeholder="comment reply") }}
+                        </div><button type="submit" class="btn btn-default">Add Reply</button>
+                    </form>
+                    </div>
+                </li>
+        </ul>
+
     </div>
     {% endfor %}
 
