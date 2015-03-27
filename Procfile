@@ -1,0 +1,1 @@
+web: gunicorn lolcatfancier:app --log-file=
