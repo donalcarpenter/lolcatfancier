@@ -22,7 +22,7 @@ def home(page=0):
     total = results.count(with_limit_and_skip=False)
     for lc in results:
         res.append(lc)
-    return render_template("list.html", cats=res, total=total, page=page, pages=ceil(total/items_per_page))
+    return render_template("list.html", cats=res, total=total, page=page, pages=ceil(total / items_per_page))
 
 
 @lol_cat_blueprint.route('/lolcat/<catid>')
@@ -32,7 +32,7 @@ def one(catid):
     :param catid:
     :return:
     """
-    if(not catid):
+    if (not catid):
         # this needs to return a 400 Bad Request
         pass
 
@@ -52,7 +52,7 @@ def save_comment(catid):
     """
     puss = LolCat.objects.get_or_404(id=catid)
     form = forms.CommentForm()
-    if(not form.validate_on_submit()):
+    if (not form.validate_on_submit()):
         flash("There were some problems validating that comment, you can try again...", "warning")
         replyForm = forms.CommentReplyForm()
         return render_template("detail.html", cat=puss, form=form, replyForms=(replyForm, ))
@@ -74,7 +74,7 @@ def save_comment_reply(catid, commentid):
     :return: redirects back to the single lolcat page
     """
     form = forms.CommentReplyForm()
-    if(not form.validate_on_submit()):
+    if (not form.validate_on_submit()):
         flash("there was an error adding your comment reply - try again", "warning")
         cat = LolCat.objects.get_or_404(id=catid)
         form.comment_id = commentid
@@ -99,7 +99,7 @@ def edit(catid=None):
     :param catid:the id of the cat to edit, or None if this is a new lolcat
     :return: the view that has the lolcat form
     """
-    if(catid):
+    if catid:
         puss = LolCat.objects.get_or_404(id=catid)
     else:
         puss = None
@@ -116,27 +116,27 @@ def save_lolcat():
     """
     try:
         form = forms.LolCatUploadForm()
-        if(not form.validate_on_submit()):
+        if (not form.validate_on_submit()):
             flash("There were some problems validating that lolcat, you can try again...", "warning")
             return render_template("create.html", form=form)
 
         cat_id = form.id.data
-        if(cat_id):
-            #this is an edit so retrieve cat details from mongo
-            flash_message ="Cat {} has been updated"
+        if (cat_id):
+            # this is an edit so retrieve cat details from mongo
+            flash_message = "Cat {} has been updated"
             cat = LolCat.objects.get_or_404(id=cat_id)
         else:
-            #this is a new lolcat
+            # this is a new lolcat
             flash_message = "Cat {} has been created"
             cat = LolCat()
 
-        cat.title   = form.title.data
-        cat.blurb   = form.blurb.data
-        cat.source  = form.source.data
+        cat.title = form.title.data
+        cat.blurb = form.blurb.data
+        cat.source = form.source.data
 
-        if(form.image_data.has_file()):
-            if(cat.image_data):
-                cat.image_data.delete() #we need to this first. otherwise the new one will not save
+        if (form.image_data.has_file()):
+            if (cat.image_data):
+                cat.image_data.delete()  # we need to this first. otherwise the new one will not save
 
             file = form.image_data.data
             cat.image_data.new_file()
