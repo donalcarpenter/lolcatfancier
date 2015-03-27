@@ -1,1 +1,1 @@
-web: gunicorn lolcatfancier:app --log-file=
+web: gunicorn lolcatfancier:app --log-file=-
