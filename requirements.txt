@@ -9,7 +9,7 @@ flask-mongoengine==0.7.1
 Flask-OAuthlib==0.5.0
 Flask-Principal==0.4.0
 Flask-Security==1.7.4
--e git+http://github.com/mattupstate/flask-social.get@36f5790c8fb6d4d9a5120d099419ba30fd73e897#egg=Flask-Social
+-e git+http://github.com/mattupstate/flask-social.git@36f5790c8fb6d4d9a5120d099419ba30fd73e897#egg=Flask-Social
 Flask-WTF==0.11
 gunicorn==19.3.0
 httplib2==0.9
