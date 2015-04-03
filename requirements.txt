@@ -1,19 +1,24 @@
+blinker==1.3
 Flask==0.10.1
 Flask-Admin==1.1.0
 Flask-Auth==0.85
 Flask-Classy==0.6.10
 Flask-Login==0.2.11
-Flask-WTF==0.11
-Jinja2==2.7.3
-MarkupSafe==0.23
-WTForms==2.0.2
-Werkzeug==0.10.1
-argparse==1.3.0
+Flask-Mail==0.9.1
 flask-mongoengine==0.7.1
+Flask-OAuthlib==0.5.0
+Flask-Principal==0.4.0
+Flask-Security==1.7.4
+-e git+http://github.com/mattupstate/flask-social.get@36f5790c8fb6d4d9a5120d099419ba30fd73e897#egg=Flask-Social
+Flask-WTF==0.11
 gunicorn==19.3.0
 httplib2==0.9
 itsdangerous==0.24
+Jinja2==2.7.3
+MarkupSafe==0.23
 mongoengine==0.8.7
+oauthlib==0.7.2
+passlib==1.6.2
 pbr==0.10.8
 pymongo==2.8
 redis==2.10.3
@@ -22,3 +27,5 @@ stevedore==1.2.0
 virtualenv==12.0.7
 virtualenv-clone==0.2.5
 virtualenvwrapper==4.3.2
+Werkzeug==0.10.1
+WTForms==2.0.2
