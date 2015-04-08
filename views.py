@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template, flash, Response, redirect, url_for
 from models.LolCat import LolCat, Comment, CommentReply
 from math import ceil
+from flask.ext.security import login_required
 import forms
 
 lol_cat_blueprint = Blueprint('lolcat', __name__)
@@ -93,6 +94,7 @@ def save_comment_reply(catid, commentid):
 
 @lol_cat_blueprint.route("/lolcat/new")
 @lol_cat_blueprint.route('/lolcat/edit/<catid>')
+@login_required
 def edit(catid=None):
     """
     This is view displays the form to add a new lolcat or edit an existing lolcat
@@ -152,6 +154,7 @@ def save_lolcat():
 
 
 @lol_cat_blueprint.route('/lolcat/delete/<catid>')
+@login_required
 def delete(catid):
     """
     This will permanentley delete a lolcat

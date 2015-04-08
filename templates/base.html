@@ -15,11 +15,18 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-              <a class="navbar-brand" href="{{ url_for('.home', page=0) }}">The Lolcat Fancier</a>
+              <a class="navbar-brand" href="{{ url_for('lolcat.home', page=0) }}">The Lolcat Fancier</a>
         </div>
         <ul class="nav navbar-nav">
-            <li><a href="{{ url_for('.home', page=0) }}">home</a></li>
-            <li><a href="{{ url_for('.edit') }}">new</a></li>
+            <li><a href="{{ url_for('lolcat.home', page=0) }}">home</a></li>
+            <li><a href="{{ url_for('lolcat.edit') }}">new</a></li>
+{% if current_user.is_authenticated() %}
+            <li><a href="{{ url_for('security.logout') }}">logout</a></li>
+{%  else %}
+            <li><a href="{{ url_for('security.login') }}">login</a></li>
+            <li><a href="{{ url_for('security.register') }}">register</a></li>
+{%  endif %}
+
         </ul>
       </div>
     </nav>

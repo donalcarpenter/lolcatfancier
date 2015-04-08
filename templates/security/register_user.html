@@ -1,0 +1,13 @@
+{% from "_macros.html" import render_form, render_field_with_errors, render_checkbox_field, render_field %}
+
+{%  extends "base.html" %}
+
+{%  block page_header %}
+<h1>Register</h1>
+{%  endblock %}
+
+{%  block content %}
+
+{{ render_form(register_user_form, action_url=url_for_security('register')) }}
+
+{%  endblock %}
