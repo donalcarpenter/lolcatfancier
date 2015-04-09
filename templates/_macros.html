@@ -96,7 +96,7 @@
                 {% elif f.type == 'RadioField' %}
                     {{ render_radio_field(f) }}
                 {%  elif f.type == 'SubmitField' %}
-                    <button type="submit" class="{{ btn_class }}">{{ f.label }} </button>
+                    <input type="submit" class="{{ btn_class }}" value="{{ f.label.text }}" />
                 {% else %}
                     {{ render_field_with_errors(f) }}
                 {% endif %}
