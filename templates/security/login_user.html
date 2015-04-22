@@ -8,6 +8,8 @@
 
 {%  block content %}
 
+    <a href="{{  url_for('profile.authorize', provider='facebook') }}">Login with Facebook</a>
+
 {{ render_form(login_user_form, action_url=url_for_security('login')) }}
 
 {%  endblock %}

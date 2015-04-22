@@ -10,9 +10,8 @@ app = Flask(__name__)
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_EMAIL_SUBJECT_REGISTER'] = 'welcome to lolcatfancier'
 app.config['SECURITY_EMAIL_SENDER'] = 'lolcatfancier@gmail.com'
-#app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'security/templates/login_user.html'
 
-
+#mongodb
 app.config['MONGODB_SETTINGS'] = {
                                     'db': getenv('MONGOLAB_DB', 'fancied_lolcats'),
                                     'username': getenv('MONGOLAB_USER'),
@@ -20,6 +19,18 @@ app.config['MONGODB_SETTINGS'] = {
                                     'host': getenv('MONGOLAB_HOST'),
                                     'port': int(getenv('MONGOLAB_PORT', 0))
                                 }
+#oauth
+app.config['OAUTH_CREDENTIALS'] = {
+    'facebook': {
+        'id': getenv('LOLCAT_FACEBOOK_APP_ID'),
+        'secret': getenv('LOLCAT_FACEBOOK_APP_SECRET')
+    },
+    'twitter': {
+        'id': getenv('LOLCAT_TWITTER_APP_ID'),
+        'secret': getenv('LOLCAT_TWITTER_APP_SECRET')
+    }
+}
+
 app.config["SECRET_KEY"] = "KeepThisS3cr3t123"
 
 app.debug = True

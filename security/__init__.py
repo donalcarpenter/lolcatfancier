@@ -3,13 +3,10 @@ from app import app, db
 from flask.ext.security import Security, MongoEngineUserDatastore
 from security.models import User, Role
 
+app.config['SECURITY_POST_LOGIN'] = '/profile'
+
 user_datastore = MongoEngineUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
-
-#app.config['SECURITY_URL_PREFIX'] = 'security'
-#app.config['SECURITY_PASSWORD_HASH'] = bcrypt
-
-
 
 
 @app.before_first_request
