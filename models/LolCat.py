@@ -32,5 +32,6 @@ class LolCat(db.Document):
     tags        = db.ListField(db.StringField())
     comments    = db.ListField(db.ReferenceField(Comment))
 
+
     def __repr__(self):
         return '<lolcat {} {}>'.format(self.id, self.title)

@@ -3,7 +3,6 @@ from flask.ext.mongoengine import MongoEngine
 from os import getenv
 from flask_mail import Mail
 
-
 app = Flask(__name__)
 
 # security
@@ -19,6 +18,7 @@ app.config['MONGODB_SETTINGS'] = {
                                     'host': getenv('MONGOLAB_HOST'),
                                     'port': int(getenv('MONGOLAB_PORT', 0))
                                 }
+
 #oauth
 app.config['OAUTH_CREDENTIALS'] = {
     'facebook': {
@@ -35,7 +35,7 @@ app.config["SECRET_KEY"] = "KeepThisS3cr3t123"
 
 app.debug = True
 
-WTF_CSRF_SECRET_KEY = "this should probbaly be a guid or something random"
+WTF_CSRF_SECRET_KEY = "this should probably be a guid or something random"
 
 db = MongoEngine(app)
 
