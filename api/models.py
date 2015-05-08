@@ -1,10 +1,9 @@
 __author__ = 'Donal_Carpenter'
 
-from flask import request, url_for
+from flask import url_for
 from flask.ext.restful import Resource, reqparse, marshal_with, fields
 from models.LolCat import LolCat as LolCatDAO
-from werkzeug.datastructures import FileStorage, Range
-from views import items_per_page
+from werkzeug.datastructures import FileStorage
 import re
 from  api.PageableResource import pageable_resource
 
@@ -37,15 +36,42 @@ class LolCatListAPI(Resource):
         res = [m._data for m in lolcats]
         return res, 200, {}, lolcats.count(with_limit_and_skip=False)
 
+    @marshal_with(lolcat_fields)
     def post(self):
-        pass
+        args = lolcat_parser.parse_args()
+        lolcat = LolCatDAO()
+        LolCatListAPI.update_lolcat_with_args(lolcat, args)
+        lolcat.save()
+        return lolcat._data, 201
+
+    @staticmethod
+    def update_lolcat_with_args(lolcat, args):
+        lolcat.blurb = args['blurb']
+
+        image = args['image']
+        if image and isinstance(image, FileStorage):
+            lolcat.image_data.new_file()
+            lolcat.image_data.content_type = image.content_type
+            lolcat.image_data.write(image.stream.read())
+            lolcat.image_data.close()
+            image.close()
+        lolcat.title = args['title']
+        lolcat.source = args['source']
 
 class LolCatAPI(Resource):
+    @marshal_with(lolcat_fields, envelope='lolcats')
     def get(self, id):
-        pass
+        puss = LolCatDAO.objects.get_or_404(id=id)
+        return puss._data
 
     def put(self, id):
-        pass
+        args = lolcat_parser.parse_args()
+        lolcat = LolCatDAO.objects.get_or_404(id=id)
+        LolCatListAPI.update_lolcat_with_args(lolcat, args)
+        lolcat.save()
+        return 200
 
     def delete(self, id ):
-        pass
+        cat = LolCatDAO.objects.get_or_404(id=id)
+        cat.delete()
+        return 200
